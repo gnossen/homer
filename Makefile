@@ -1,7 +1,6 @@
 all: bin/go-dm
 
 SRC=$(shell find src -name '*.go')
-$(info ${SRC})
 
 bin/go-dm:  $(SRC)
 	mkdir -p bin pkg
