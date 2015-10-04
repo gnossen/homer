@@ -8,6 +8,7 @@ import (
     "math/rand"
     "strings"
     "errors"
+    "time"
 )
 
 const (
@@ -90,9 +91,33 @@ func DiceHandler(args []string, dm *DM) (string, *CmdError) {
     return strconv.Itoa(sum), nil
 }
 
+func SeedParser(args []string) (int64, error) {
+    if len(args) != 1 {
+        return 0, errors.New("setseed takes one argument.")
+    }
+    seed, err := strconv.ParseInt(args[0], 0, 64)
+    if err != nil {
+        return 0, errors.New("setseed takes an integer.")
+    }
+    return seed, nil
+}
+
+func SeedHandler(args []string, dm *DM) (string, *CmdError) {
+    seed, err := SeedParser(args)
+    if err != nil {
+        return "", &CmdError {
+            errType: PARSE_ERROR,
+            errStr: err.Error(),
+        }
+    }
+    dm.Rand = rand.New(rand.NewSource(seed))
+    return fmt.Sprintf("RNG set to seed %s.", args[0]), nil
+}
+
 func (dm *DM) Init() {
-    dm.Rand = rand.New(rand.NewSource(0xD8D4E7E8))
+    dm.Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
     dm.RegisterCmd("dice", "dice [num-dice] [num-sides]", DiceHandler)
+    dm.RegisterCmd("setseed", "dice [seed]", SeedHandler)
 }
 
 func (dm *DM) ParseCmd(cmdStr string) (string, error) {
