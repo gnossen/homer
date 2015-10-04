@@ -11,7 +11,7 @@ import (
 func main() {
 	fmt.Printf("Homer - Dungeon Master's Shell\n")
 	dm := &dm.DM{}
-	dm.Init()
+	dm.DefaultInit()
 	reader := bufio.NewReader(os.Stdin)
 	for {
 		fmt.Printf("> ")
