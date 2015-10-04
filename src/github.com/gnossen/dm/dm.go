@@ -4,11 +4,38 @@ import (
     "io"
     "os"
     "fmt"
+    "strconv"
+    "math/rand"
+    "strings"
+    "errors"
 )
+
+const (
+    PARSE_ERROR = iota
+    EXECUTION_ERROR = iota
+)
+
+type CmdError struct {
+    errType int
+    errStr  string
+}
+
+func (err *CmdError) Error() string {
+   return err.errStr
+}
+
+type CmdHandler func(args []string, dm *DM) (res string, err *CmdError)
+
+type Cmd struct {
+    Name    string
+    HelpStr string
+    Handler CmdHandler
+}
 
 type DMController interface {
     io.ReadWriter
     ParseCmd(string) (string, error)
+    RegisterCmd(string, string, CmdHandler)
 }
 
 func ToFile(dm DMController, filename string) error {
@@ -32,18 +59,74 @@ func FromFile(dm DMController, filename string) error {
 }
 
 type DM struct {
-    name string
+    cmds []Cmd
+    Rand *rand.Rand
 }
 
-func (dm DM) ParseCmd(cmd string) (string, error) {
-    dm.name = cmd
-    return fmt.Sprintf("My name is %s!", dm.name), nil
+func DiceParser(args []string) (int, int, string) {
+    if(len(args) != 2) {
+        return 0, 0, "dice takes two arguments"
+    }
+    numDice, err1 := strconv.Atoi(args[0])
+    diceSides, err2 := strconv.Atoi(args[1])
+    if err1 != nil || err2 != nil || numDice < 1 || diceSides < 1{
+        return 0, 0, "dice takes two positive integers."
+    }
+    return numDice, diceSides, ""
 }
 
-func (dm DM) Read(p []byte) (int, error) {
+func DiceHandler(args []string, dm *DM) (string, *CmdError) {
+    numDice, diceSides, errString := DiceParser(args)
+    if errString != "" {
+        return "", &CmdError {
+            errType: PARSE_ERROR,
+            errStr: errString,
+        }
+    }
+    sum := 0
+    for i := 0; i < numDice; i++ {
+        sum += dm.Rand.Intn(diceSides)
+    }
+    return strconv.Itoa(sum), nil
+}
+
+func (dm *DM) Init() {
+    dm.Rand = rand.New(rand.NewSource(0xD8D4E7E8))
+    dm.RegisterCmd("dice", "dice [num-dice] [num-sides]", DiceHandler)
+}
+
+func (dm *DM) ParseCmd(cmdStr string) (string, error) {
+    args := strings.Fields(cmdStr)
+    if len(args) == 0 {
+        return "", nil
+    }
+    for _, cmd := range dm.cmds {
+        if args[0] == cmd.Name {
+            res, err := cmd.Handler(args[1:], dm)
+            if err != nil && err.errType == PARSE_ERROR {
+                return fmt.Sprintf("Usage: %s", cmd.HelpStr), err
+            } else if err != nil {
+                return "", err
+            }
+            return res, nil
+        }
+    }
+    return "", errors.New(fmt.Sprintf("%s: Unrecognized command.", args[0]))
+}
+
+func (dm *DM) RegisterCmd(cmdName string, help string, handler CmdHandler) {
+    newCmd := Cmd{
+        Name: cmdName,
+        HelpStr: help,
+        Handler: handler,
+    }
+    dm.cmds = append(dm.cmds, newCmd)
+}
+
+func (dm *DM) Read(p []byte) (int, error) {
     return 0, nil
 }
 
-func (dm DM) Write(p []byte) (int, error) {
+func (dm *DM) Write(p []byte) (int, error) {
     return 0, nil
 }
