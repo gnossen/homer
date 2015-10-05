@@ -42,23 +42,17 @@ func ListHandler(args []string, dm *DM) (string, *CmdError) {
     var buf bytes.Buffer
     if listType == LIST_ACTIVE || listType == LIST_ALL {
         for _, mob := range dm.Active {
-           buf.WriteString(mob.Name)
-           buf.WriteString(fmt.Sprintf(" (%s)", mob.Nick))
-           buf.WriteString("\n")
+           buf.WriteString(fmt.Sprintf("%s (%s) (A)\n", mob.Name, mob.Nick))
         }
     }
     if listType == LIST_INACTIVE || listType == LIST_ALL {
         for _, mob := range dm.Inactive {
-           buf.WriteString(mob.Name)
-           buf.WriteString(fmt.Sprintf(" (%s)", mob.Nick))
-           buf.WriteString("\n")
+           buf.WriteString(fmt.Sprintf("%s (%s) (I)\n", mob.Name, mob.Nick))
         }
     }
     if listType == LIST_CLASS || listType == LIST_ALL {
         for _, mob := range dm.Bestiary {
-           buf.WriteString(mob.Name)
-           buf.WriteString(fmt.Sprintf(" (%s)", mob.Nick))
-           buf.WriteString("\n")
+           buf.WriteString(fmt.Sprintf("%s (%s) (C)\n", mob.Name, mob.Nick))
         }
     }
     return strings.TrimRight(buf.String(), "\n"), nil

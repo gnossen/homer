@@ -51,12 +51,39 @@ func (dm *DM) LoadActive() {
         fmt.Printf("Error parsing 'active.json': %s\n", err.Error())
         os.Exit(1)
     }
+    fmt.Printf("Loaded %d active mobs.\n", len(dm.Active))
 }
 
 func (dm *DM) LoadInactive() {
-
+	filename := path.Join(dm.directory, "inactive.json")
+	if _, err := os.Stat(filename); os.IsNotExist(err) {
+		return
+	}
+    file, err := ioutil.ReadFile(filename)
+    if err != nil {
+        panic("Could not read 'inactive.json'.")
+    }
+    err = json.Unmarshal(file, &dm.Inactive)
+    if err != nil {
+        fmt.Printf("Error parsing 'inactive.json': %s\n", err.Error())
+        os.Exit(1)
+    }
+    fmt.Printf("Loaded %d inactive mobs.\n", len(dm.Inactive))
 }
 
 func (dm *DM) LoadBestiary() {
-
+	filename := path.Join(dm.directory, "class.json")
+	if _, err := os.Stat(filename); os.IsNotExist(err) {
+		return
+	}
+    file, err := ioutil.ReadFile(filename)
+    if err != nil {
+        panic("Could not read 'class.json'.")
+    }
+    err = json.Unmarshal(file, &dm.Bestiary)
+    if err != nil {
+        fmt.Printf("Error parsing 'class.json': %s\n", err.Error())
+        os.Exit(1)
+    }
+    fmt.Printf("Loaded %d mob classes.\n", len(dm.Bestiary))
 }
