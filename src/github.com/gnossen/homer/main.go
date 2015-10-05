@@ -21,6 +21,9 @@ func main() {
 			continue
 		}
 		input = strings.TrimRight(input, "\n")
+        if input == "exit" || input == "quit" {
+            break
+        }
 		res, err := dm.ParseCmd(input)
 		if err != nil {
 			fmt.Printf("%s\n", err)

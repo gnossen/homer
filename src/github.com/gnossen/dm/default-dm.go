@@ -12,12 +12,13 @@ import (
 
 func (dm *DM) DefaultInit() {
 	dm.Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
-	dm.RegisterCmd("dice", "dice [num-dice] [num-sides]", DiceHandler)
-	dm.RegisterCmd("d", "dice [num-dice] [num-sides]", DiceHandler)
-	dm.RegisterCmd("seed", "seed [seed]", SeedHandler)
-	dm.RegisterCmd("list", "list [active|inactive|class|all]", ListHandler)
-	dm.RegisterCmd("ls", "list [active|inactive|class|all]", ListHandler)
-	dm.RegisterCmd("l", "list [active|inactive|class|all]", ListHandler)
+	dm.RegisterCmd("dice", "dice [num-dice] [num-sides]", false, DiceHandler)
+	dm.RegisterCmd("d", "dice [num-dice] [num-sides]", true, DiceHandler)
+	dm.RegisterCmd("seed", "seed [seed]", false, SeedHandler)
+	dm.RegisterCmd("list", "list [active|inactive|class|all]", false, ListHandler)
+	dm.RegisterCmd("ls", "list [active|inactive|class|all]", true, ListHandler)
+	dm.RegisterCmd("l", "list [active|inactive|class|all]", true, ListHandler)
+    dm.RegisterCmd("help", "help [cmd]", false, HelpHandler)
 	dir, err := os.Getwd()
 	if err != nil {
 		fmt.Printf("Cannot read current working directory.\n")

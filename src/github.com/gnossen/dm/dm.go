@@ -28,10 +28,11 @@ type Cmd struct {
 	Name    string
 	HelpStr string
 	Handler CmdHandler
+    Alias   bool
 }
 
 type DM struct {
-	cmds      []Cmd
+	Cmds      []Cmd
 	Rand      *rand.Rand
 	Active    []mob.ActiveMob
 	Inactive  []mob.Mob
@@ -48,7 +49,7 @@ func (dm *DM) ParseCmd(cmdStr string) (string, error) {
 	if len(args) == 0 {
 		return "", nil
 	}
-	for _, cmd := range dm.cmds {
+	for _, cmd := range dm.Cmds {
 		if args[0] == cmd.Name {
 			res, err := cmd.Handler(args[1:], dm)
 			if err != nil && err.errType == PARSE_ERROR {
@@ -62,11 +63,12 @@ func (dm *DM) ParseCmd(cmdStr string) (string, error) {
 	return "", errors.New(fmt.Sprintf("%s: Unrecognized command.", args[0]))
 }
 
-func (dm *DM) RegisterCmd(cmdName string, help string, handler CmdHandler) {
+func (dm *DM) RegisterCmd(cmdName string, help string, alias bool, handler CmdHandler) {
 	newCmd := Cmd{
 		Name:    cmdName,
 		HelpStr: help,
 		Handler: handler,
+        Alias: alias,
 	}
-	dm.cmds = append(dm.cmds, newCmd)
+	dm.Cmds = append(dm.Cmds, newCmd)
 }
