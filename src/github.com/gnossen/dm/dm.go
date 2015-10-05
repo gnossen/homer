@@ -3,6 +3,7 @@ package dm
 import (
 	"errors"
 	"fmt"
+	"github.com/gnossen/mob"
 	"math/rand"
 	"strings"
 )
@@ -30,8 +31,16 @@ type Cmd struct {
 }
 
 type DM struct {
-	cmds []Cmd
-	Rand *rand.Rand
+	cmds      []Cmd
+	Rand      *rand.Rand
+	Active    []mob.ActiveMob
+	Inactive  []mob.Mob
+	Bestiary  []mob.MobClass
+	directory string
+}
+
+func (dm *DM) SetDirectory(directory string) {
+	dm.directory = directory
 }
 
 func (dm *DM) ParseCmd(cmdStr string) (string, error) {
