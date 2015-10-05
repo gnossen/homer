@@ -1,13 +1,13 @@
 package dm
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"math/rand"
 	"os"
 	"path"
 	"time"
-    "io/ioutil"
-    "encoding/json"
 )
 
 func (dm *DM) DefaultInit() {
@@ -15,15 +15,15 @@ func (dm *DM) DefaultInit() {
 	dm.RegisterCmd("dice", "dice [num-dice] [num-sides]", DiceHandler)
 	dm.RegisterCmd("d", "dice [num-dice] [num-sides]", DiceHandler)
 	dm.RegisterCmd("seed", "seed [seed]", SeedHandler)
-    dm.RegisterCmd("list", "list [active|inactive|class|all]", ListHandler)
-    dm.RegisterCmd("ls", "list [active|inactive|class|all]", ListHandler)
-    dm.RegisterCmd("l", "list [active|inactive|class|all]", ListHandler)
-    dir, err := os.Getwd()
-    if err != nil {
+	dm.RegisterCmd("list", "list [active|inactive|class|all]", ListHandler)
+	dm.RegisterCmd("ls", "list [active|inactive|class|all]", ListHandler)
+	dm.RegisterCmd("l", "list [active|inactive|class|all]", ListHandler)
+	dir, err := os.Getwd()
+	if err != nil {
 		fmt.Printf("Cannot read current working directory.\n")
 		panic("Cannot read current working directory.\n")
 	}
-    dm.directory = dir
+	dm.directory = dir
 	dm.LoadActive()
 	dm.LoadInactive()
 	dm.LoadBestiary()
@@ -42,16 +42,16 @@ func (dm *DM) LoadActive() {
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
 		return
 	}
-    file, err := ioutil.ReadFile(filename)
-    if err != nil {
-        panic("Could not read 'active.json'.")
-    }
-    err = json.Unmarshal(file, &dm.Active)
-    if err != nil {
-        fmt.Printf("Error parsing 'active.json': %s\n", err.Error())
-        os.Exit(1)
-    }
-    fmt.Printf("Loaded %d active mobs.\n", len(dm.Active))
+	file, err := ioutil.ReadFile(filename)
+	if err != nil {
+		panic("Could not read 'active.json'.")
+	}
+	err = json.Unmarshal(file, &dm.Active)
+	if err != nil {
+		fmt.Printf("Error parsing 'active.json': %s\n", err.Error())
+		os.Exit(1)
+	}
+	fmt.Printf("Loaded %d active mobs.\n", len(dm.Active))
 }
 
 func (dm *DM) LoadInactive() {
@@ -59,16 +59,16 @@ func (dm *DM) LoadInactive() {
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
 		return
 	}
-    file, err := ioutil.ReadFile(filename)
-    if err != nil {
-        panic("Could not read 'inactive.json'.")
-    }
-    err = json.Unmarshal(file, &dm.Inactive)
-    if err != nil {
-        fmt.Printf("Error parsing 'inactive.json': %s\n", err.Error())
-        os.Exit(1)
-    }
-    fmt.Printf("Loaded %d inactive mobs.\n", len(dm.Inactive))
+	file, err := ioutil.ReadFile(filename)
+	if err != nil {
+		panic("Could not read 'inactive.json'.")
+	}
+	err = json.Unmarshal(file, &dm.Inactive)
+	if err != nil {
+		fmt.Printf("Error parsing 'inactive.json': %s\n", err.Error())
+		os.Exit(1)
+	}
+	fmt.Printf("Loaded %d inactive mobs.\n", len(dm.Inactive))
 }
 
 func (dm *DM) LoadBestiary() {
@@ -76,14 +76,14 @@ func (dm *DM) LoadBestiary() {
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
 		return
 	}
-    file, err := ioutil.ReadFile(filename)
-    if err != nil {
-        panic("Could not read 'class.json'.")
-    }
-    err = json.Unmarshal(file, &dm.Bestiary)
-    if err != nil {
-        fmt.Printf("Error parsing 'class.json': %s\n", err.Error())
-        os.Exit(1)
-    }
-    fmt.Printf("Loaded %d mob classes.\n", len(dm.Bestiary))
+	file, err := ioutil.ReadFile(filename)
+	if err != nil {
+		panic("Could not read 'class.json'.")
+	}
+	err = json.Unmarshal(file, &dm.Bestiary)
+	if err != nil {
+		fmt.Printf("Error parsing 'class.json': %s\n", err.Error())
+		os.Exit(1)
+	}
+	fmt.Printf("Loaded %d mob classes.\n", len(dm.Bestiary))
 }
