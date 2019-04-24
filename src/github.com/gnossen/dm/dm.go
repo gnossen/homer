@@ -28,7 +28,7 @@ type Cmd struct {
 	Name    string
 	HelpStr string
 	Handler CmdHandler
-    Alias   bool
+	Alias   bool
 }
 
 type DM struct {
@@ -68,7 +68,7 @@ func (dm *DM) RegisterCmd(cmdName string, help string, alias bool, handler CmdHa
 		Name:    cmdName,
 		HelpStr: help,
 		Handler: handler,
-        Alias: alias,
+		Alias:   alias,
 	}
 	dm.Cmds = append(dm.Cmds, newCmd)
 }
