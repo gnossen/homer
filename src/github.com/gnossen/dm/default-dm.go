@@ -18,7 +18,7 @@ func (dm *DM) DefaultInit() {
 	dm.RegisterCmd("list", "list [active|inactive|class|all]", false, ListHandler)
 	dm.RegisterCmd("ls", "list [active|inactive|class|all]", true, ListHandler)
 	dm.RegisterCmd("l", "list [active|inactive|class|all]", true, ListHandler)
-    dm.RegisterCmd("help", "help [cmd]", false, HelpHandler)
+	dm.RegisterCmd("help", "help [cmd]", false, HelpHandler)
 	dir, err := os.Getwd()
 	if err != nil {
 		fmt.Printf("Cannot read current working directory.\n")
@@ -30,12 +30,16 @@ func (dm *DM) DefaultInit() {
 	dm.LoadBestiary()
 }
 
-func (dm *DM) Dice(numDice int, numSides int) int {
-	sum := 0
+func (dm *DM) Dice(numDice int, numSides int) ([]int, int) {
+	rolls := make([]int, numDice)
 	for i := 0; i < numDice; i++ {
-		sum += dm.Rand.Intn(numSides)
+		rolls[i] = dm.Rand.Intn(numSides)
 	}
-	return sum
+	sum := 0
+	for _, roll := range rolls {
+		sum += roll
+	}
+	return rolls, sum
 }
 
 func (dm *DM) LoadActive() {

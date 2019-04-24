@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"strconv"
+	"strings"
 )
 
 func DiceParser(args []string) (int, int, string) {
@@ -27,8 +28,15 @@ func DiceHandler(args []string, dm *DM) (string, *CmdError) {
 			errStr:  errString,
 		}
 	}
-	res := dm.Dice(numDice, diceSides)
-	return strconv.Itoa(res), nil
+	rolls, sum := dm.Dice(numDice, diceSides)
+	return FormatDiceResults(rolls, sum), nil
+}
+
+func FormatDiceResults(rolls []int, sum int) string {
+	return fmt.Sprintf(
+		"%s\nTotal: %d",
+		strings.Trim(fmt.Sprintf("%v", rolls), "[]"),
+		sum)
 }
 
 func SeedParser(args []string) (int64, error) {
